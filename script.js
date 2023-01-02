@@ -1,4 +1,5 @@
 "use strict";
+// data variable ( will be an array ) is declared to store fetched data from the JSON file
 let data;
 const showData = (arr) => {
   const tableBody = document.querySelector("tbody");

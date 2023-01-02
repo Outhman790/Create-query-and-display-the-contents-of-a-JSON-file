@@ -5,3 +5,10 @@ img {
 th {
   cursor: pointer;
 }
+th,
+td {
+  text-align: justify;
+}
+li {
+  list-style: disc;
+}
