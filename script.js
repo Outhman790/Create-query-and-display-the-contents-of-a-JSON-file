@@ -3,7 +3,6 @@
 let data;
 const showData = (arr) => {
   const tableBody = document.querySelector("tbody");
-  // data = arr;
   let tableRow = "";
   for (let i = 0; i < arr.length; i++) {
     let festivales = "";
@@ -30,78 +29,22 @@ const showData = (arr) => {
   }
   tableBody.innerHTML = tableRow;
 };
-const bringData = function () {
+// initializing a function for sending http request with a URL parameter
+const sendHttpRequest = (url) => {
   let xhr = new XMLHttpRequest();
-  xhr.onload = function () {
-    let arr = JSON.parse(this.responseText);
-    data = arr;
-    showData(arr);
+  xhr.open("GET", url, true);
+  xhr.responseType = "json";
+  xhr.onreadystatechange = function () {
+    if (this.status == 200 && this.readyState == 4) {
+      data = xhr.response;
+      showData(data);
+    }
   };
-  xhr.open("GET", "movies.json", true);
   xhr.send();
 };
+// fetch movies.json when loading the page
 window.addEventListener("load", (e) => {
-  bringData();
-});
-// I was trying to do a function to sort all the table header elements but it didn't work
-// const sortArr = (data, ele) => {
-//   data.sort((a, b) => a.ele.localeCompare(b.ele));
-// };
-// const tableHeader = document.querySelector("#tableHead");
-// tableHeader.addEventListener("click", (e) => {
-//   if (e.target.id === e.target.dataset.name) {
-//     console.log("done");
-//     sortArr(data, e.target.id);
-//     showData(data);
-//   }
-// });
-// sort movies titles
-const movieTitleTh = document.querySelector("#title");
-let moviesSortedByTitle = false;
-movieTitleTh.addEventListener("click", (e) => {
-  if (!moviesSortedByTitle) {
-    data.sort((a, b) => a.title.localeCompare(b.title));
-    moviesSortedByTitle = true;
-  } else {
-    data.reverse();
-  }
-  showData(data);
-});
-// sort movie directors
-const movieDirectorTh = document.querySelector("#director");
-let moviesSortedByDirector = false;
-movieDirectorTh.addEventListener("click", (e) => {
-  if (!moviesSortedByDirector) {
-    data.sort((a, b) => a.director.localeCompare(b.director));
-    moviesSortedByDirector = true;
-  } else {
-    data.reverse();
-  }
-  showData(data);
-});
-// sort movies duration
-const movieDurationTh = document.querySelector("#runtime");
-let moviesSortedByDuration = false;
-movieDurationTh.addEventListener("click", (e) => {
-  if (!moviesSortedByDuration) {
-    data.sort((a, b) => a.runtime - b.runtime);
-    moviesSortedByDuration = true;
-  } else {
-    data.reverse();
-  }
-  showData(data);
-});
-// sort movies production date
-const movieProductionDateTh = document.querySelector("#year");
-let moviesSortedByDate = false;
-movieProductionDateTh.addEventListener("click", (e) => {
-  if (!moviesSortedByDate) {
-    data.sort((a, b) => a.year - b.year);
-    moviesSortedByDate = true;
-  } else {
-    data.reverse();
-  }
-  showData(data);
+  sendHttpRequest("movies.json");
 });
 // search for a movie
 const searchMovieInput = document.querySelector("#search-input");
@@ -111,3 +54,41 @@ searchMovieInput.addEventListener("keyup", (e) => {
   if (searchMovieInput.value.length < 1) showData(data);
   else showData(data.filter((movieObj) => movieObj.title.match(searchRegex)));
 });
+// Sorting depending on which th the user clicked
+const tableHeadings = document.querySelectorAll("thead th");
+const sortTable = () => {
+  tableHeadings.forEach((th) => {
+    th.addEventListener("click", () => {
+      const thIcon = th.querySelector("i");
+      if (
+        thIcon.classList.contains("notSorted") ||
+        thIcon.classList.contains("sortedDescendally")
+      ) {
+        sortAscendant(th.id);
+        th.innerHTML = `${th.id} <i class="sortedAscendally fa-solid fa-sort-up"></i>`;
+      } else if (thIcon.classList.contains("sortedAscendally")) {
+        sortDescendant(th.id);
+        th.innerHTML = `${th.id} <i class="sortedDescendally fa-solid fa-sort-down"></i>`;
+      }
+    });
+  });
+};
+sortTable();
+// sort Descendanlly
+const sortDescendant = (idValue) => {
+  data.sort(function (a, b) {
+    if (a[idValue].toLowerCase() < b[idValue].toLowerCase()) return 1;
+    else if (a[idValue].toLowerCase() > b[idValue].toLowerCase()) return -1;
+    else return 0;
+  });
+  showData(data);
+};
+// sort Ascendanlly
+const sortAscendant = (idValue) => {
+  data.sort(function (a, b) {
+    if (a[idValue].toLowerCase() > b[idValue].toLowerCase()) return 1;
+    else if (a[idValue].toLowerCase() < b[idValue].toLowerCase()) return -1;
+    else return 0;
+  });
+  showData(data);
+};
