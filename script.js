@@ -1,6 +1,10 @@
 "use strict";
 // data variable ( will be an array ) is declared to store fetched data from the JSON file
 let data;
+/**
+ * This function takes an array of movie objects and displays them in the table.
+ * @param {Array} arr - An array of movie objects
+ */
 const showData = (arr) => {
   const tableBody = document.querySelector("tbody");
   let tableRow = "";
@@ -27,6 +31,7 @@ const showData = (arr) => {
         <td>${actors}</td>
         </tr>`;
   }
+
   tableBody.innerHTML = tableRow;
 };
 // initializing a function for sending http request with a URL parameter
@@ -56,6 +61,12 @@ searchMovieInput.addEventListener("keyup", (e) => {
 });
 // Sorting depending on which th the user clicked
 const tableHeadings = document.querySelectorAll("thead th");
+/**
+ * This function sets up event listeners for each th element in the table
+ * so that when clicked, the table gets sorted by that column in ascending
+ * order the first time, then in descending order the second time, and so forth.
+ * @function
+ */
 const sortTable = () => {
   tableHeadings.forEach((th) => {
     th.addEventListener("click", () => {
@@ -74,21 +85,44 @@ const sortTable = () => {
   });
 };
 sortTable();
-// sort Descendanlly
+/**
+ * Sorts the table in descending order based on the column specified by
+ * `idValue`.
+ * @param {string} idValue - The id of the column in the table to sort.
+ * @returns {undefined}
+ */
 const sortDescendant = (idValue) => {
-  data.sort(function (a, b) {
-    if (a[idValue].toLowerCase() < b[idValue].toLowerCase()) return 1;
-    else if (a[idValue].toLowerCase() > b[idValue].toLowerCase()) return -1;
-    else return 0;
+  data.sort((a, b) => {
+    // Handle numeric values (like runtime or year)
+    if (!isNaN(a[idValue]) && !isNaN(b[idValue])) {
+      return b[idValue] - a[idValue];
+    }
+    // Handle string values
+    const valueA = String(a[idValue]).toLowerCase();
+    const valueB = String(b[idValue]).toLowerCase();
+    // Use localeCompare for better string comparison
+    return valueB.localeCompare(valueA);
   });
+
   showData(data);
 };
-// sort Ascendanlly
+/**
+ * Sorts the table in ascending order based on the column specified by
+ * `idValue`.
+ * @param {string} idValue - The id of the column in the table to sort.
+ * @returns {undefined}
+ */
 const sortAscendant = (idValue) => {
   data.sort(function (a, b) {
-    if (a[idValue].toLowerCase() > b[idValue].toLowerCase()) return 1;
-    else if (a[idValue].toLowerCase() < b[idValue].toLowerCase()) return -1;
-    else return 0;
+    if (!NaN(a[idValue]) && !isNaN(b[idValue])) {
+      return a[idValue] - b[idValue];
+    } else {
+      // Handle string values
+      const valueA = String(a[idValue]).toLowerCase();
+      const valueB = String(b[idValue]).toLowerCase();
+      // Use localeCompare for better string comparison
+      return valueA.localeCompare(valueB);
+    }
   });
   showData(data);
 };
