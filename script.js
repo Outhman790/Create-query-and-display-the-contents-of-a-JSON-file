@@ -68,19 +68,31 @@ const tableHeadings = document.querySelectorAll("thead th");
  * @function
  */
 const sortTable = () => {
-  tableHeadings.forEach((th) => {
+  tableHeadings.forEach((th, i) => {
+    let lastSortedColumn = null;
+    let isAscending = true;
     th.addEventListener("click", () => {
+      /// remove the sorted class from th elements that can sort movies
+      tableHeadings.forEach((header, i) => {
+        if (i < 4) {
+          header.querySelector("i").className = "notSorted fa-solid fa-sort";
+        }
+      });
+      lastSortedColumn === th.id
+        ? (isAscending = !isAscending)
+        : (isAscending = true);
+      /// add the sorted class to the clicked th element
       const thIcon = th.querySelector("i");
-      if (
-        thIcon.classList.contains("notSorted") ||
-        thIcon.classList.contains("sortedDescendally")
-      ) {
-        sortAscendant(th.id);
-        th.innerHTML = `${th.id} <i class="sortedAscendally fa-solid fa-sort-up"></i>`;
-      } else if (thIcon.classList.contains("sortedAscendally")) {
+      if (isAscending) {
         sortDescendant(th.id);
         th.innerHTML = `${th.id} <i class="sortedDescendally fa-solid fa-sort-down"></i>`;
+        isAscending = false;
+      } else {
+        sortAscendant(th.id);
+        th.innerHTML = `${th.id} <i class="sortedAscendally fa-solid fa-sort-up"></i>`;
+        isAscending = true;
       }
+      lastSortedColumn = th.id;
     });
   });
 };
@@ -114,7 +126,7 @@ const sortDescendant = (idValue) => {
  */
 const sortAscendant = (idValue) => {
   data.sort(function (a, b) {
-    if (!NaN(a[idValue]) && !isNaN(b[idValue])) {
+    if (!isNaN(a[idValue]) && !isNaN(b[idValue])) {
       return a[idValue] - b[idValue];
     } else {
       // Handle string values
