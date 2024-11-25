@@ -10,6 +10,10 @@
       integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
     <script
       src="https://kit.fontawesome.com/c1f4059a23.js"
       crossorigin="anonymous"
@@ -41,19 +45,19 @@
         <tr>
           <th data-name="title" id="title" scope="col">
             title
-            <i class="notSorted"></i>
+            <i class="notSorted fa-solid fa-sort"></i>
           </th>
           <th data-name="director" id="director" scope="col">
             director/ice
-            <i class="notSorted"></i>
+            <i class="notSorted fa-solid fa-sort"></i>
           </th>
           <th data-name="runtime" id="runtime" scope="col">
             runtime
-            <i class="notSorted"></i>
+            <i class="notSorted fa-solid fa-sort"></i>
           </th>
           <th data-name="year" id="year" scope="col">
             year
-            <i class="notSorted"></i>
+            <i class="notSorted fa-solid fa-sort"></i>
           </th>
           <th data-name="poster" id="poster" scope="col">Poster</th>
           <th data-name="festivals" id="festivals" scope="col">Festivals</th>
@@ -64,6 +68,51 @@
     </table>
     <div class="container">
       <div id="pagination-wrapper"></div>
+    </div>
+    <div
+      class="modal fade"
+      id="infoModal"
+      tabindex="-1"
+      aria-labelledby="infoModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="infoModalLabel">
+              Welcome to CinemaSort
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>Explore, sort, and discover movies with ease:</p>
+            <ul>
+              <li>Browse our curated film collection</li>
+              <li>Sort by title, director, runtime, or year</li>
+              <li>Search for your favorite movies</li>
+              <li>View detailed film information</li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+            >
+              Start Exploring
+            </button>
+            <p>
+              <i class="fab fa-github" href></i> Made by
+              <a href="https://github.com/Outhman790">Outhman</a>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

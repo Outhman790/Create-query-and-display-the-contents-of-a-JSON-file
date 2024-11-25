@@ -1,38 +1,85 @@
 "use strict";
+// Show modal when the page loads
+document.addEventListener("DOMContentLoaded", (event) => {
+  var myModal = new bootstrap.Modal(document.getElementById("infoModal"), {
+    keyboard: false,
+  });
+  myModal.show();
+});
+
+// ... rest of your existing JavaScript code
 // data variable ( will be an array ) is declared to store fetched data from the JSON file
 let data;
 /**
  * This function takes an array of movie objects and displays them in the table.
  * @param {Array} arr - An array of movie objects
  */
+// const showData = (arr) => {
+//   const tableBody = document.querySelector("tbody");
+//   let tableRow = "";
+//   for (let i = 0; i < arr.length; i++) {
+//     let festivales = "";
+//     let actors = "";
+//     for (let j = 0; j < arr[i].festivals.length; j++) {
+//       festivales += `<li>${arr[i].festivals[j]}</li>`;
+//     }
+//     for (let k = 0; k < arr[i].actors.length; k++) {
+//       actors += `<p>
+//         ${arr[i].actors[k].name} ${arr[i].actors[k].lastName} from ${arr[i].actors[k].nationality}
+//         </p>
+//         `;
+//     }
+
+//     tableRow += `<tr>
+//         <td scope="row">${arr[i].title}</td>
+//         <td>${arr[i].director}</td>
+//         <td>${arr[i].runtime} mins</td>
+//         <td>${arr[i].year}</td>
+//         <td> <img src="${arr[i].poster}"></td>
+//         <td>${festivales}</td>
+//         <td>${actors}</td>
+//         </tr>`;
+//   }
+
+//   tableBody.innerHTML = tableRow;
+// };
+
 const showData = (arr) => {
   const tableBody = document.querySelector("tbody");
-  let tableRow = "";
-  for (let i = 0; i < arr.length; i++) {
-    let festivales = "";
-    let actors = "";
-    for (let j = 0; j < arr[i].festivals.length; j++) {
-      festivales += `<li>${arr[i].festivals[j]}</li>`;
-    }
-    for (let k = 0; k < arr[i].actors.length; k++) {
-      actors += `<p> 
-        ${arr[i].actors[k].name} ${arr[i].actors[k].lastName} from ${arr[i].actors[k].nationality}
-        </p>
-        `;
-    }
+  tableBody.innerHTML = ""; // Clear the table body
 
-    tableRow += `<tr>
-        <td scope="row">${arr[i].title}</td>
-        <td>${arr[i].director}</td>
-        <td>${arr[i].runtime} mins</td>
-        <td>${arr[i].year}</td>
-        <td> <img src="${arr[i].poster}"></td>
-        <td>${festivales}</td>
-        <td>${actors}</td>
-        </tr>`;
-  }
+  arr.forEach((movie, index) => {
+    const row = document.createElement("tr");
+    row.className = "table-row-animation table-row-hidden";
 
-  tableBody.innerHTML = tableRow;
+    row.innerHTML = `
+      <td scope="row">${movie.title}</td>
+      <td>${movie.director}</td>
+      <td>${movie.runtime} mins</td>
+      <td>${movie.year}</td>
+      <td><img src="${movie.poster}" alt="${movie.title} poster"></td>
+      <td>${movie.festivals
+        .map((festival) => `<li>${festival}</li>`)
+        .join("")}</td>
+      <td>${movie.actors
+        .map(
+          (actor) =>
+            `<p>${actor.name} ${actor.lastName} from ${actor.nationality}</p>`
+        )
+        .join("")}</td>
+    `;
+
+    tableBody.appendChild(row);
+
+    // Trigger reflow
+    row.offsetHeight;
+
+    // Add visible class after a short delay
+    setTimeout(() => {
+      row.classList.remove("table-row-hidden");
+      row.classList.add("table-row-move");
+    }, index * 75);
+  });
 };
 // initializing a function for sending http request with a URL parameter
 const sendHttpRequest = (url) => {
@@ -69,8 +116,7 @@ const tableHeadings = document.querySelectorAll("thead th");
  */
 const sortTable = () => {
   tableHeadings.forEach((th, i) => {
-    let lastSortedColumn = null;
-    let isAscending = true;
+    let isAscending = false;
     th.addEventListener("click", () => {
       /// remove the sorted class from th elements that can sort movies
       tableHeadings.forEach((header, i) => {
@@ -78,21 +124,19 @@ const sortTable = () => {
           header.querySelector("i").className = "notSorted fa-solid fa-sort";
         }
       });
-      lastSortedColumn === th.id
-        ? (isAscending = !isAscending)
-        : (isAscending = true);
       /// add the sorted class to the clicked th element
       const thIcon = th.querySelector("i");
       if (isAscending) {
         sortDescendant(th.id);
         th.innerHTML = `${th.id} <i class="sortedDescendally fa-solid fa-sort-down"></i>`;
         isAscending = false;
+        showData(data);
       } else {
         sortAscendant(th.id);
         th.innerHTML = `${th.id} <i class="sortedAscendally fa-solid fa-sort-up"></i>`;
         isAscending = true;
+        showData(data);
       }
-      lastSortedColumn = th.id;
     });
   });
 };
