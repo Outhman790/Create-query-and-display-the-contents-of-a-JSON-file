@@ -47,6 +47,18 @@ let data;
 const showData = (arr) => {
   const tableBody = document.querySelector("tbody");
   tableBody.innerHTML = ""; // Clear the table body
+  if (arr.length === 0) {
+    // Display message when no movies are found
+    const messageRow = document.createElement("tr");
+    messageRow.innerHTML = `
+      <td colspan="7" class="text-center py-5">
+        <h3>No movies found</h3>
+        <p>Try adjusting your search criteria</p>
+      </td>
+    `;
+    tableBody.appendChild(messageRow);
+    return;
+  }
 
   arr.forEach((movie, index) => {
     const row = document.createElement("tr");
@@ -91,6 +103,7 @@ const sendHttpRequest = (url) => {
       data = xhr.response;
       showData(data);
     }
+    console.log(data);
   };
   xhr.send();
 };
