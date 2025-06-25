@@ -10,6 +10,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
 // ... rest of your existing JavaScript code
 // data variable ( will be an array ) is declared to store fetched data from the JSON file
 let data;
+// filteredData will hold search results and is used for pagination
+let filteredData = [];
+// currentPage keeps track of the page being displayed
+let currentPage = 1;
+// items to show per page
+const itemsPerPage = 10;
+// keep track of the latest search query
+let searchQuery = "";
 /**
  * This function takes an array of movie objects and displays them in the table.
  * @param {Array} arr - An array of movie objects
@@ -18,6 +26,7 @@ let data;
 const showData = (arr) => {
   const tableBody = document.querySelector("tbody");
   tableBody.innerHTML = ""; // Clear the table body
+
   if (arr.length === 0) {
     // Display message when no movies are found
     const messageRow = document.createElement("tr");
@@ -28,10 +37,16 @@ const showData = (arr) => {
       </td>
     `;
     tableBody.appendChild(messageRow);
+    // Clear pagination when there is no data
+    document.querySelector("#pagination-wrapper").innerHTML = "";
     return;
   }
 
-  arr.forEach((movie, index) => {
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedItems = arr.slice(startIndex, endIndex);
+
+  paginatedItems.forEach((movie, index) => {
     const row = document.createElement("tr");
     row.className = "table-row-animation table-row-hidden";
 
@@ -63,6 +78,35 @@ const showData = (arr) => {
       row.classList.add("table-row-move");
     }, index * 75);
   });
+
+  // render pagination controls
+  renderPagination(arr);
+};
+
+/**
+ * Render pagination buttons based on the provided array length.
+ * @param {Array} arr - array used to calculate total pages
+ */
+const renderPagination = (arr) => {
+  const wrapper = document.querySelector("#pagination-wrapper");
+  wrapper.innerHTML = "";
+
+  const totalPages = Math.ceil(arr.length / itemsPerPage);
+  if (totalPages <= 1) return; // no need to render buttons
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.className = "btn btn-primary m-1";
+    btn.textContent = i;
+    if (i === currentPage) {
+      btn.disabled = true;
+    }
+    btn.addEventListener("click", () => {
+      currentPage = i;
+      showData(filteredData);
+    });
+    wrapper.appendChild(btn);
+  }
 };
 // initializing a function for sending http request with a URL parameter
 const sendHttpRequest = (url) => {
@@ -72,7 +116,10 @@ const sendHttpRequest = (url) => {
   xhr.onreadystatechange = function () {
     if (this.status == 200 && this.readyState == 4) {
       data = xhr.response;
-      showData(data);
+      filteredData = [...data];
+      currentPage = 1;
+      searchQuery = "";
+      showData(filteredData);
     }
     console.log(data);
   };
@@ -86,9 +133,15 @@ window.addEventListener("load", (e) => {
 const searchMovieInput = document.querySelector("#search-input");
 searchMovieInput.addEventListener("keyup", (e) => {
   e.preventDefault();
-  const searchRegex = new RegExp(`${searchMovieInput.value}`, `gi`);
-  if (searchMovieInput.value.length < 1) showData(data);
-  else showData(data.filter((movieObj) => movieObj.title.match(searchRegex)));
+  searchQuery = searchMovieInput.value.trim();
+  const searchRegex = new RegExp(`${searchQuery}`, `gi`);
+  if (searchQuery.length < 1) {
+    filteredData = [...data];
+  } else {
+    filteredData = data.filter((movieObj) => movieObj.title.match(searchRegex));
+  }
+  currentPage = 1;
+  showData(filteredData);
 });
 // Sorting depending on which th the user clicked
 const tableHeadings = document.querySelectorAll("thead th");
@@ -114,13 +167,20 @@ const sortTable = () => {
         sortDescendant(th.id);
         th.innerHTML = `${th.id} <i class="sortedDescendally fa-solid fa-sort-down"></i>`;
         isAscending = false;
-        showData(data);
       } else {
         sortAscendant(th.id);
         th.innerHTML = `${th.id} <i class="sortedAscendally fa-solid fa-sort-up"></i>`;
         isAscending = true;
-        showData(data);
       }
+      // refresh filtered data and show first page
+      if (searchQuery.length < 1) {
+        filteredData = [...data];
+      } else {
+        const regex = new RegExp(`${searchQuery}`, "gi");
+        filteredData = data.filter((movieObj) => movieObj.title.match(regex));
+      }
+      currentPage = 1;
+      showData(filteredData);
     });
   });
 };
@@ -143,8 +203,6 @@ const sortDescendant = (idValue) => {
     // Use localeCompare for better string comparison
     return valueB.localeCompare(valueA);
   });
-
-  showData(data);
 };
 /**
  * Sorts the table in ascending order based on the column specified by
@@ -164,5 +222,4 @@ const sortAscendant = (idValue) => {
       return valueA.localeCompare(valueB);
     }
   });
-  showData(data);
 };
