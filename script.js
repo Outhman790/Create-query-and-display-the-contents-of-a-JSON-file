@@ -14,35 +14,6 @@ let data;
  * This function takes an array of movie objects and displays them in the table.
  * @param {Array} arr - An array of movie objects
  */
-// const showData = (arr) => {
-//   const tableBody = document.querySelector("tbody");
-//   let tableRow = "";
-//   for (let i = 0; i < arr.length; i++) {
-//     let festivales = "";
-//     let actors = "";
-//     for (let j = 0; j < arr[i].festivals.length; j++) {
-//       festivales += `<li>${arr[i].festivals[j]}</li>`;
-//     }
-//     for (let k = 0; k < arr[i].actors.length; k++) {
-//       actors += `<p>
-//         ${arr[i].actors[k].name} ${arr[i].actors[k].lastName} from ${arr[i].actors[k].nationality}
-//         </p>
-//         `;
-//     }
-
-//     tableRow += `<tr>
-//         <td scope="row">${arr[i].title}</td>
-//         <td>${arr[i].director}</td>
-//         <td>${arr[i].runtime} mins</td>
-//         <td>${arr[i].year}</td>
-//         <td> <img src="${arr[i].poster}"></td>
-//         <td>${festivales}</td>
-//         <td>${actors}</td>
-//         </tr>`;
-//   }
-
-//   tableBody.innerHTML = tableRow;
-// };
 
 const showData = (arr) => {
   const tableBody = document.querySelector("tbody");
