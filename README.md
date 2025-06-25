@@ -45,7 +45,7 @@ This project helps reinforce the following frontend concepts:
 * Integrating Bootstrap layouts and responsive table classes
 * Using Font Awesome icons for visual clarity
 
-### Screenshots
+### 🖥️ Screenshots
 
 ![image](https://github.com/user-attachments/assets/b627745c-a214-40f8-a47a-edddbae55219)
 
